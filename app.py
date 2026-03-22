@@ -72,7 +72,7 @@ _DEFAULTS = {
     "user_id": None, "username": None,
     "results": None, "image_bytes": None, "image_hash": None,
     "uploaded_at": None, "ai_raw_json": None, "source": None,
-    "deleted_item": None, "login_attempts": {},
+    "deleted_item": None, "login_attempts": {}, "input_key": 0,
 }
 for _k, _v in _DEFAULTS.items():
     if _k not in st.session_state:
@@ -174,10 +174,10 @@ st.markdown(
 )
 cam_tab, up_tab = st.tabs(["Camera", "Upload"])
 with cam_tab:
-    camera_img = st.camera_input("Take a picture of your food")
+    camera_img = st.camera_input("Take a picture of your food", key=f"cam_{st.session_state.input_key}")
 with up_tab:
     upload_img = st.file_uploader(
-        "Or upload a photo", type=["jpg", "jpeg", "png", "webp"]
+        "Or upload a photo", type=["jpg", "jpeg", "png", "webp"], key=f"up_{st.session_state.input_key}"
     )
 
 img_src = camera_img or upload_img
@@ -212,6 +212,7 @@ with b3:
             "uploaded_at", "ai_raw_json", "source", "deleted_item",
         ]:
             st.session_state[k] = None
+        st.session_state.input_key += 1
         st.rerun()
 
 if manual_start and st.session_state.results is None:
