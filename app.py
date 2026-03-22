@@ -236,26 +236,27 @@ if analyze_clicked:
             else:
                 enriched: list[dict] = []
                 with st.spinner("🍽️ Fetching nutrition…"):
-                    for item in foods:
+                    from concurrent.futures import ThreadPoolExecutor
+                    def _fetch(item):
                         name = item.get("name", "Unknown")
                         conf = item.get("confidence", 0)
                         grams = safe_grams(item.get("estimated_grams"))
                         n100, matched, src = search_nutrition(name)
                         nutr = compute_nutrition(n100, grams)
-                        enriched.append(
-                            {
-                                "name": name,
-                                "original_name": name,
-                                "confidence": conf,
-                                "grams": grams,
-                                "entered_unit": "grams",
-                                "entered_quantity": grams,
-                                "nutrition_source": src,
-                                "matched_product_name": matched,
-                                "status": "ai_detected",
-                                **nutr,
-                            }
-                        )
+                        return {
+                            "name": name,
+                            "original_name": name,
+                            "confidence": conf,
+                            "grams": grams,
+                            "entered_unit": "grams",
+                            "entered_quantity": grams,
+                            "nutrition_source": src,
+                            "matched_product_name": matched,
+                            "status": "ai_detected",
+                            **nutr,
+                        }
+                    with ThreadPoolExecutor(max_workers=8) as pool:
+                        enriched = list(pool.map(_fetch, foods))
                 st.session_state.results = enriched
                 if not st.session_state.uploaded_at:
                     st.session_state.uploaded_at = datetime.now().strftime(
