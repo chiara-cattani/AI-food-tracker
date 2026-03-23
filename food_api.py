@@ -47,20 +47,20 @@ def search_nutrition(food_name: str) -> tuple:
         "search_simple": 1,
         "action": "process",
         "json": 1,
-        "page_size": 10,
+        "page_size": 5,
         "fields": "product_name,nutriments",
     }
 
     data = None
-    for attempt in range(3):
+    for attempt in range(2):
         try:
-            resp = requests.get(SEARCH_URL, params=params, timeout=10)
+            resp = requests.get(SEARCH_URL, params=params, timeout=5)
             resp.raise_for_status()
             data = resp.json()
             break
         except (requests.RequestException, ValueError):
-            if attempt < 2:
-                time.sleep(1.0 * (attempt + 1))
+            if attempt < 1:
+                time.sleep(0.5)
 
     if data is None:
         return (dict(FALLBACK_NUTRITION), None, "fallback")

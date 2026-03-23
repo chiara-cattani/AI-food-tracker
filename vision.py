@@ -42,7 +42,7 @@ def recognize_food(image_bytes: bytes) -> tuple[dict, str]:
     b64_image = base64.b64encode(image_bytes).decode("utf-8")
 
     response = client.chat.completions.create(
-        model="gpt-4o",
+        model="gpt-4o-mini",
         messages=[
             {
                 "role": "user",
