@@ -174,7 +174,7 @@ st.markdown(
 )
 cam_tab, up_tab = st.tabs(["Camera", "Upload"])
 with cam_tab:
-    camera_img = st.camera_input("Take a picture of your food", key=f"cam_{st.session_state.input_key}", facing_mode="environment")
+    camera_img = st.camera_input("Take a picture of your food", key=f"cam_{st.session_state.input_key}")
 with up_tab:
     upload_img = st.file_uploader(
         "Or upload a photo", type=["jpg", "jpeg", "png", "webp"], key=f"up_{st.session_state.input_key}"
