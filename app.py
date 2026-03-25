@@ -1,6 +1,7 @@
 import time
 import json
 import streamlit as st
+import streamlit.components.v1
 import pandas as pd
 from datetime import datetime, date, timedelta
 
@@ -174,11 +175,23 @@ st.markdown(
 )
 cam_tab, up_tab = st.tabs(["Camera", "Upload"])
 with cam_tab:
-    camera_img = st.camera_input("Take a picture of your food", key=f"cam_{st.session_state.input_key}", facing_mode="environment")
+    camera_img = st.camera_input("Take a picture of your food", key=f"cam_{st.session_state.input_key}")
 with up_tab:
     upload_img = st.file_uploader(
         "Or upload a photo", type=["jpg", "jpeg", "png", "webp"], key=f"up_{st.session_state.input_key}"
     )
+
+# Patch file inputs to default to rear camera on mobile
+st.components.v1.html("""<script>
+(function patch(){
+    try {
+        window.parent.document.querySelectorAll('input[type="file"]').forEach(function(el){
+            el.setAttribute('capture','environment');
+        });
+    } catch(e){}
+    setTimeout(patch, 400);
+})();
+</script>""", height=0)
 
 img_src = camera_img or upload_img
 if img_src:
